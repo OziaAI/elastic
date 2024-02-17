@@ -16,7 +16,7 @@ jobs:
           context_name: "remote"
           ssh_cert: ${{ secrets.SSH_CERT }}
           ssh_key: ${{ secrets.SSH_KEY }}
-      - name: Deploy the database on created context
+      - name: Deploy Elastic and Kibana on created context
         env:
           ELASTIC_PASSWORD: ${{ secrets.ELASTIC_PASSWORD }}
           KIBANA_PASSWORD: ${{ secrets.KIBANA_PASSWORD }}

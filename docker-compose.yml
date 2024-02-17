@@ -44,6 +44,8 @@ services:
         until curl -s -X POST -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" http://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
         echo "All done!";
       '
+    networks:
+      - elasticnet
     healthcheck:
       test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
       interval: 1s
@@ -77,6 +79,9 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
     mem_limit: ${MEM_LIMIT_ELASTIC}
+    networks:
+      - elasticnet
+      - proxynet
     ulimits:
       memlock:
         soft: -1
@@ -107,6 +112,8 @@ services:
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
     mem_limit: ${MEM_LIMIT_KIBANA}
+    networks:
+      - elasticnet
     healthcheck:
       test:
         [
@@ -124,3 +131,8 @@ volumes:
     driver: local
   kibanadata:
     driver: local
+
+networks:
+  proxynet:
+    name: ozia_backend
+  elasticnet:
