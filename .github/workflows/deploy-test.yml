@@ -1,0 +1,25 @@
+name: "Deploy Elastic stack on test server"
+
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: "Publish on the test server"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create a remote docker context
+        uses: arwynfr/actions-docker-context@v2
+        with:
+          docker_host: ${{ secrets.DOCKER_HOST }}
+          context_name: "remote"
+          ssh_cert: ${{ secrets.SSH_CERT }}
+          ssh_key: ${{ secrets.SSH_KEY }}
+      - name: Deploy the database on created context
+        env:
+          ELASTIC_PASSWORD: ${{ secrets.ELASTIC_PASSWORD }}
+          KIBANA_PASSWORD: ${{ secrets.KIBANA_PASSWORD }}
+        run: |
+          docker --context remote compose up --build -d
+
