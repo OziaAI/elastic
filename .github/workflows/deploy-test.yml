@@ -3,6 +3,7 @@ name: "Deploy Elastic stack on test server"
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
